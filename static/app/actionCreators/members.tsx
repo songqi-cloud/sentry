@@ -73,7 +73,7 @@ export function indexMembersByProject(members: Member[]): IndexedMembersByProjec
 }
 
 type UpdateMemberOptions = {
-  data: Member | null;
+  data: Partial<Member> | null;
   memberId: string;
   orgId: string;
 };
