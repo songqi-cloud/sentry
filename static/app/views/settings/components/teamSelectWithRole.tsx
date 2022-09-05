@@ -6,6 +6,7 @@ import Button from 'sentry/components/button';
 import DropdownAutoComplete from 'sentry/components/dropdownAutoComplete';
 import {Item} from 'sentry/components/dropdownAutoComplete/types';
 import DropdownButton from 'sentry/components/dropdownButton';
+import EmptyMessage from 'sentry/components/emptyMessage';
 import {TeamBadge} from 'sentry/components/idBadge/teamBadge';
 import Link from 'sentry/components/links/link';
 import LoadingIndicator from 'sentry/components/loadingIndicator';
@@ -18,7 +19,6 @@ import space from 'sentry/styles/space';
 import {Member, OrgRole, Team, TeamRole} from 'sentry/types';
 import useOrganization from 'sentry/utils/useOrganization';
 import useTeams from 'sentry/utils/useTeams';
-import EmptyMessage from 'sentry/views/settings/components/emptyMessage';
 import {
   hasOrgRoleOverwrite,
   RoleOverwritePanelAlert,
@@ -83,11 +83,13 @@ function TeamSelect({
 
     return (
       <React.Fragment>
-        <RoleOverwritePanelAlert
-          orgRole={orgRole}
-          orgRoleList={orgRoleList}
-          teamRoleList={teamRoleList}
-        />
+        {organization.features.includes('team-roles') && (
+          <RoleOverwritePanelAlert
+            orgRole={orgRole}
+            orgRoleList={orgRoleList}
+            teamRoleList={teamRoleList}
+          />
+        )}
         {rows.map(teamMembership => {
           const {teamSlug, role} = teamMembership;
           const team = teams.find(tm => tm.slug === teamMembership.teamSlug);
@@ -178,7 +180,7 @@ const TeamRow = ({
   const isRoleOverwritten = hasOrgRoleOverwrite({orgRole, orgRoleList, teamRoleList});
 
   const teamRoleObj = isRoleOverwritten
-    ? teamRoleList[1]
+    ? teamRoleList[1] // set as team admin
     : teamRoleList.find(r => r.id === teamRole) || teamRoleList[0];
 
   return (
@@ -192,7 +194,7 @@ const TeamRow = ({
       <div>
         {organization.features.includes('team-roles') && (
           <RoleSelectControl
-            disabled={isRoleOverwritten}
+            disabled={disabled || isRoleOverwritten}
             disableUnallowed={false}
             roles={teamRoleList}
             value={teamRoleObj?.id}
