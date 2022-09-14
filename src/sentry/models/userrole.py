@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models.signals import post_migrate
 
 from sentry.db.models import ArrayField, DefaultFieldsModel, region_silo_model, sane_repr
+from sentry.db.models.base import ModelSiloLimit
 from sentry.db.models.fields.foreignkey import FlexibleForeignKey
 
 
@@ -62,12 +63,15 @@ def manage_default_super_admin_role(app_config, using, **kwargs):
     except LookupError:
         return
 
-    role, _ = UserRole.objects.get_or_create(
-        name="Super Admin", defaults={"permissions": settings.SENTRY_USER_PERMISSIONS}
-    )
-    if role.permissions != settings.SENTRY_USER_PERMISSIONS:
-        role.permissions = settings.SENTRY_USER_PERMISSIONS
-        role.save(update_fields=["permissions"])
+    try:
+        role, _ = UserRole.objects.get_or_create(
+            name="Super Admin", defaults={"permissions": settings.SENTRY_USER_PERMISSIONS}
+        )
+        if role.permissions != settings.SENTRY_USER_PERMISSIONS:
+            role.permissions = settings.SENTRY_USER_PERMISSIONS
+            role.save(update_fields=["permissions"])
+    except ModelSiloLimit.AvailabilityError:
+        pass
 
 
 post_migrate.connect(
