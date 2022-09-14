@@ -18,6 +18,7 @@ from sentry.testutils.helpers.datetime import before_now, iso_format
 # XXX(dcramer): this is a compatibility layer to transition to pytest-based fixtures
 # all of the memoized fixtures are copypasta due to our inability to use pytest fixtures
 # on a per-class method basis
+from sentry.testutils.silo import exempt_from_silo_limits
 from sentry.types.activity import ActivityType
 
 
@@ -101,40 +102,49 @@ class Fixtures:
     def organization_integration(self):
         return self.integration.add_organization(self.organization, self.user)
 
+    @exempt_from_silo_limits()
     def create_organization(self, *args, **kwargs):
         return Factories.create_organization(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_member(self, *args, **kwargs):
         return Factories.create_member(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_team_membership(self, *args, **kwargs):
         return Factories.create_team_membership(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_team(self, organization=None, **kwargs):
         if organization is None:
             organization = self.organization
 
         return Factories.create_team(organization=organization, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_environment(self, project=None, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_environment(project=project, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_project(self, **kwargs):
         kwargs.setdefault("teams", [self.team])
         return Factories.create_project(**kwargs)
 
+    @exempt_from_silo_limits()
     def create_project_bookmark(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_project_bookmark(project=project, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_project_key(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_project_key(project=project, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_project_rule(
         self, project=None, action_match=None, condition_match=None, *args, **kwargs
     ):
@@ -148,6 +158,7 @@ class Fixtures:
             **kwargs,
         )
 
+    @exempt_from_silo_limits()
     def create_slack_project_rule(
         self, project=None, integration_id=None, channel_id=None, channel_name=None, *args, **kwargs
     ):
@@ -162,16 +173,19 @@ class Fixtures:
             **kwargs,
         )
 
+    @exempt_from_silo_limits()
     def create_release(self, project=None, user=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_release(project=project, user=user, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_release_file(self, release_id=None, file=None, name=None, dist_id=None):
         if release_id is None:
             release_id = self.release.id
         return Factories.create_release_file(release_id, file, name, dist_id)
 
+    @exempt_from_silo_limits()
     def create_artifact_bundle(self, org=None, release=None, *args, **kwargs):
         if org is None:
             org = self.organization.slug
@@ -179,6 +193,7 @@ class Fixtures:
             release = self.release.version
         return Factories.create_artifact_bundle(org, release, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_release_archive(self, org=None, release=None, *args, **kwargs):
         if org is None:
             org = self.organization.slug
@@ -186,6 +201,7 @@ class Fixtures:
             release = self.release.version
         return Factories.create_release_archive(org, release, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_code_mapping(self, project=None, repo=None, organization_integration=None, **kwargs):
         if project is None:
             project = self.project
@@ -193,50 +209,62 @@ class Fixtures:
             organization_integration = self.organization_integration
         return Factories.create_code_mapping(project, repo, organization_integration, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_repo(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_repo(project=project, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_commit(self, *args, **kwargs):
         return Factories.create_commit(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_commit_author(self, *args, **kwargs):
         return Factories.create_commit_author(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_commit_file_change(self, *args, **kwargs):
         return Factories.create_commit_file_change(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_user(self, *args, **kwargs):
         return Factories.create_user(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_useremail(self, *args, **kwargs):
         return Factories.create_useremail(*args, **kwargs)
 
     def store_event(self, *args, **kwargs):
         return Factories.store_event(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_group(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_group(project=project, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_file(self, **kwargs):
         return Factories.create_file(**kwargs)
 
+    @exempt_from_silo_limits()
     def create_file_from_path(self, *args, **kwargs):
         return Factories.create_file_from_path(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_event_attachment(self, event=None, *args, **kwargs):
         if event is None:
             event = self.event
         return Factories.create_event_attachment(event=event, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_dif_file(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
         return Factories.create_dif_file(project=project, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_dif_from_path(self, project=None, *args, **kwargs):
         if project is None:
             project = self.project
@@ -245,51 +273,67 @@ class Fixtures:
     def add_user_permission(self, *args, **kwargs):
         return Factories.add_user_permission(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_sentry_app(self, *args, **kwargs):
         return Factories.create_sentry_app(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_internal_integration(self, *args, **kwargs):
         return Factories.create_internal_integration(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_internal_integration_token(self, *args, **kwargs):
         return Factories.create_internal_integration_token(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_sentry_app_installation(self, *args, **kwargs):
         return Factories.create_sentry_app_installation(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_stacktrace_link_schema(self, *args, **kwargs):
         return Factories.create_stacktrace_link_schema(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_issue_link_schema(self, *args, **kwargs):
         return Factories.create_issue_link_schema(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_alert_rule_action_schema(self, *args, **kwargs):
         return Factories.create_alert_rule_action_schema(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_sentry_app_feature(self, *args, **kwargs):
         return Factories.create_sentry_app_feature(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_doc_integration(self, *args, **kwargs):
         return Factories.create_doc_integration(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_doc_integration_features(self, *args, **kwargs):
         return Factories.create_doc_integration_features(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_doc_integration_avatar(self, *args, **kwargs):
         return Factories.create_doc_integration_avatar(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_service_hook(self, *args, **kwargs):
         return Factories.create_service_hook(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_userreport(self, *args, **kwargs):
         return Factories.create_userreport(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_platform_external_issue(self, *args, **kwargs):
         return Factories.create_platform_external_issue(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_integration_external_issue(self, *args, **kwargs):
         return Factories.create_integration_external_issue(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_incident(self, organization=None, projects=None, *args, **kwargs):
         if not organization:
             organization = self.organization
@@ -300,14 +344,17 @@ class Fixtures:
             organization=organization, projects=projects, *args, **kwargs
         )
 
+    @exempt_from_silo_limits()
     def create_incident_activity(self, incident, *args, **kwargs):
         return Factories.create_incident_activity(incident=incident, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_incident_comment(self, incident, *args, **kwargs):
         return self.create_incident_activity(
             incident, type=IncidentActivityType.COMMENT.value, *args, **kwargs
         )
 
+    @exempt_from_silo_limits()
     def create_alert_rule(self, organization=None, projects=None, *args, **kwargs):
         if not organization:
             organization = self.organization
@@ -315,11 +362,13 @@ class Fixtures:
             projects = [self.project]
         return Factories.create_alert_rule(organization, projects, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_alert_rule_trigger(self, alert_rule=None, *args, **kwargs):
         if not alert_rule:
             alert_rule = self.create_alert_rule()
         return Factories.create_alert_rule_trigger(alert_rule, *args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_alert_rule_trigger_action(
         self,
         alert_rule_trigger=None,
@@ -341,6 +390,7 @@ class Fixtures:
             alert_rule_trigger, target_identifier=target_identifier, **kwargs
         )
 
+    @exempt_from_silo_limits()
     def create_external_user(self, user=None, organization=None, integration=None, **kwargs):
         if not user:
             user = self.user
@@ -353,6 +403,7 @@ class Fixtures:
             user=user, organization=organization, integration_id=integration.id, **kwargs
         )
 
+    @exempt_from_silo_limits()
     def create_external_team(self, team=None, integration=None, **kwargs):
         if not team:
             team = self.team
@@ -363,6 +414,7 @@ class Fixtures:
             team=team, organization=team.organization, integration_id=integration.id, **kwargs
         )
 
+    @exempt_from_silo_limits()
     def create_codeowners(self, project=None, code_mapping=None, **kwargs):
         if not project:
             project = self.project
@@ -372,6 +424,7 @@ class Fixtures:
 
         return Factories.create_codeowners(project=project, code_mapping=code_mapping, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_slack_integration(
         self,
         organization: "Organization",
@@ -391,25 +444,31 @@ class Fixtures:
 
         return integration
 
+    @exempt_from_silo_limits()
     def create_integration(
         self, organization: Organization, external_id: str, **kwargs: Any
     ) -> Integration:
         return Factories.create_integration(organization, external_id, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_identity(self, *args, **kwargs):
         return Factories.create_identity(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_identity_provider(self, *args, **kwargs):
         return Factories.create_identity_provider(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_group_history(self, *args, **kwargs):
         if "actor" not in kwargs:
             kwargs["actor"] = self.user.actor
         return Factories.create_group_history(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_comment(self, *args, **kwargs):
         return Factories.create_comment(*args, **kwargs)
 
+    @exempt_from_silo_limits()
     def create_sentry_function(self, *args, **kwargs):
         return Factories.create_sentry_function(*args, **kwargs)
 
