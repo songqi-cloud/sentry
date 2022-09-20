@@ -2,7 +2,6 @@ import {mountWithTheme} from 'sentry-test/enzyme';
 
 import {openSudo} from 'sentry/actionCreators/modal';
 import * as OrganizationActionCreator from 'sentry/actionCreators/organization';
-import ProjectActions from 'sentry/actions/projectActions';
 import ConfigStore from 'sentry/stores/configStore';
 import OrganizationStore from 'sentry/stores/organizationStore';
 import TeamStore from 'sentry/stores/teamStore';
@@ -57,7 +56,7 @@ describe('OrganizationContextContainer', function () {
     });
 
     jest.spyOn(TeamStore, 'loadInitialData');
-    jest.spyOn(ProjectActions, 'loadProjects');
+    jest.spyOn(ProjectsStore, 'loadInitialData');
     jest.spyOn(OrganizationActionCreator, 'fetchOrganizationDetails');
   });
 
@@ -66,7 +65,7 @@ describe('OrganizationContextContainer', function () {
     OrganizationStore.reset();
 
     TeamStore.loadInitialData.mockRestore();
-    ProjectActions.loadProjects.mockRestore();
+    ProjectsStore.loadInitialData.mockRestore();
     ConfigStore.get.mockRestore();
     OrganizationActionCreator.fetchOrganizationDetails.mockRestore();
   });
@@ -86,7 +85,7 @@ describe('OrganizationContextContainer', function () {
     expect(wrapper.state('organization')).toEqual(org);
 
     expect(TeamStore.loadInitialData).toHaveBeenCalledWith(teams);
-    expect(ProjectActions.loadProjects).toHaveBeenCalledWith(projects);
+    expect(ProjectsStore.loadInitialData).toHaveBeenCalledWith(projects);
     expect(OrganizationActionCreator.fetchOrganizationDetails).toHaveBeenCalledWith(
       api,
       'org-slug',

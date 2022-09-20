@@ -1,6 +1,5 @@
 import {act, render, screen, userEvent, waitFor} from 'sentry-test/reactTestingLibrary';
 
-import ProjectActions from 'sentry/actions/projectActions';
 import ProjectsStore from 'sentry/stores/projectsStore';
 import Projects from 'sentry/utils/projects';
 
@@ -210,7 +209,7 @@ describe('utils.projects', function () {
       );
 
       const newTeam = TestStubs.Team();
-      act(() => ProjectActions.addTeamSuccess(newTeam, 'foo'));
+      act(() => ProjectsStore.onAddTeam(newTeam, 'foo'));
 
       await waitFor(() =>
         expect(renderer).toHaveBeenCalledWith(
@@ -556,7 +555,7 @@ describe('utils.projects', function () {
   });
 
   describe('with all projects prop', function () {
-    const loadProjects = jest.spyOn(ProjectActions, 'loadProjects');
+    const loadProjects = jest.spyOn(ProjectsStore, 'loadInitialData');
     let mockProjects;
     let request;
 
@@ -660,7 +659,7 @@ describe('utils.projects', function () {
       );
 
       const newTeam = TestStubs.Team();
-      act(() => ProjectActions.addTeamSuccess(newTeam, 'a'));
+      act(() => ProjectsStore.onAddTeam(newTeam, 'a'));
 
       // Expect new team information to be available
       await waitFor(() =>
