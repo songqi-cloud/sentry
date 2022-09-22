@@ -32,13 +32,6 @@ export default class Subscriptions extends Component<Props> {
     this.context.form.setValue('events', this.props.events);
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    // if webhooks are disabled, unset the events
-    if (nextProps.webhookDisabled && this.props.events.length) {
-      this.save([]);
-    }
-  }
-
   componentDidUpdate() {
     const {permissions, events} = this.props;
 
@@ -48,6 +41,10 @@ export default class Subscriptions extends Component<Props> {
 
     if (JSON.stringify(events) !== JSON.stringify(permittedEvents)) {
       this.save(permittedEvents);
+    }
+
+    if (this.props.webhookDisabled && this.props.events.length) {
+      this.save([]);
     }
   }
 
