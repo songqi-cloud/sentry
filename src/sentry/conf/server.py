@@ -1183,7 +1183,7 @@ SENTRY_FEATURES = {
     # Enable u2f verification on superuser form
     "organizations:u2f-superuser-form": False,
     # Enable setting team-level roles and receiving permissions from them
-    "organizations:team-roles": False,
+    "organizations:team-roles": True,
     # Enable snowflake ids
     "organizations:enable-snowflake-id": False,
     # Adds additional filters and a new section to issue alert rules.
