@@ -80,9 +80,7 @@ class AsyncComponent<
     if (props.routes && props.routes) {
       metric.mark({name: `async-component-${getRouteStringFromRoutes(props.routes)}`});
     }
-  }
 
-  UNSAFE_componentWillMount() {
     this.api = new Client();
     this.fetchData();
 
