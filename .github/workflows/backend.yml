@@ -157,10 +157,10 @@ jobs:
       - name: Handle artifacts
         uses: ./.github/actions/artifacts
 
-  backend-test-in-customer-mode:
+  backend-test-in-region-mode:
     if: needs.files-changed.outputs.backend == 'true'
     needs: files-changed
-    name: backend test in customer mode
+    name: backend test in region mode
     runs-on: ubuntu-20.04
     timeout-minutes: 20
     strategy:
@@ -176,7 +176,7 @@ jobs:
       # XXX: MATRIX_INSTANCE_TOTAL must be hardcoded to the length of strategy.matrix.instance.
       MATRIX_INSTANCE_TOTAL: 4
       MIGRATIONS_TEST_MIGRATE: 1
-      SENTRY_SILO_MODE: CUSTOMER
+      SENTRY_SILO_MODE: REGION
 
     steps:
       - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e  # v2
