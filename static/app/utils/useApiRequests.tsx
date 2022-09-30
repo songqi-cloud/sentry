@@ -5,6 +5,8 @@ import {ResponseMeta} from 'sentry/api';
 import LoadingError from 'sentry/components/loadingError';
 import LoadingIndicator from 'sentry/components/loadingIndicator';
 import {t} from 'sentry/locale';
+import {paths} from 'sentry/openapi';
+import {ExtractPathResponseData} from 'sentry/types/api';
 import {metric} from 'sentry/utils/analytics';
 import getRouteStringFromRoutes from 'sentry/utils/getRouteStringFromRoutes';
 import useApi from 'sentry/utils/useApi';
@@ -87,15 +89,15 @@ type EndpointRequestOptions = {
   paginate?: boolean;
 };
 
-export type EndpointDefinition<T extends Record<string, any>> = [
-  key: keyof T,
+export type EndpointDefinition<TKey extends string> = [
+  key: TKey,
   url: string,
   urlOptions?: {query?: Record<string, string>},
   requestOptions?: EndpointRequestOptions
 ];
 
-type Options<T extends Record<string, any>> = {
-  endpoints: EndpointDefinition<T>[];
+type Options<TKey extends string, TPath extends keyof paths> = {
+  endpoints: EndpointDefinition<TKey>[];
   /**
    * If a request fails and is not a bad request, and if `disableErrorReport`
    * is set to false, the UI will display an error modal.
@@ -105,8 +107,15 @@ type Options<T extends Record<string, any>> = {
    */
   disableErrorReport?: boolean;
   onLoadAllEndpointsSuccess?: () => void;
-  onRequestError?: (error: RequestError, args: Options<T>['endpoints'][0]) => void;
-  onRequestSuccess?: (data: {data: any; stateKey: keyof T; resp?: ResponseMeta}) => void;
+  onRequestError?: (
+    error: RequestError,
+    args: Options<TKey, TPath>['endpoints'][0]
+  ) => void;
+  onRequestSuccess?: (data: {
+    data: ExtractPathResponseData<TPath, 'get'>;
+    stateKey: TKey;
+    resp?: ResponseMeta;
+  }) => void;
   /**
    * Override this flag to have the component reload its state when the window
    * becomes visible again. This will set the loading and reloading state, but
@@ -134,7 +143,7 @@ function renderLoading() {
   return <LoadingIndicator />;
 }
 
-function useApiRequests<T extends Record<string, any>>({
+function useApiRequests<TKey extends string, TPath extends keyof paths>({
   endpoints,
   reloadOnVisible = false,
   shouldReload = false,
@@ -143,7 +152,7 @@ function useApiRequests<T extends Record<string, any>>({
   onLoadAllEndpointsSuccess = () => {},
   onRequestSuccess = _data => {},
   onRequestError = (_error, _args) => {},
-}: Options<T>): Result<T> {
+}: Options<TKey, TPath>): Result<TKey, TPath> {
   const api = useApi();
   const location = useLocation<any>();
   const params = useParams();

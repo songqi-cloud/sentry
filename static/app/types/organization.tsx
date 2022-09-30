@@ -1,5 +1,7 @@
+import {operations, paths} from 'sentry/openapi';
 import {AggregationOutputType} from 'sentry/utils/discover/fields';
 
+import {ExtractPathResponseData} from './api';
 import type {Actor, Avatar, ObjectStatus, Scope} from './core';
 import type {OrgExperiments} from './experiments';
 import type {ExternalTeam} from './integrations';
@@ -101,6 +103,12 @@ export interface OrgRole extends MemberRole {
 export interface TeamRole extends MemberRole {
   isMinimumRoleFor: string;
 }
+
+type MembersResponse = ExtractPathResponseData<
+  '/api/0/organizations/{organization_slug}/users/',
+  'get'
+>;
+// export type Member = MembersResponse[number];
 
 /**
  * Returned from /organizations/org/users/

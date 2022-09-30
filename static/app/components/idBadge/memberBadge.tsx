@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 
 import UserAvatar from 'sentry/components/avatar/userAvatar';
 import Link, {LinkProps} from 'sentry/components/links/link';
@@ -19,7 +20,7 @@ interface Props {
 
 function getMemberUser(member: Member): AvatarUser {
   if (member.user) {
-    return member.user;
+    return pick(member.user, ['id', 'name', 'email', 'username']);
   }
   // Adapt the member into a AvatarUser
   return {
@@ -27,7 +28,6 @@ function getMemberUser(member: Member): AvatarUser {
     name: member.name,
     email: member.email,
     username: '',
-    ip_address: '',
   };
 }
 

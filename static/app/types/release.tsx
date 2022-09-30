@@ -1,5 +1,6 @@
 import type {PlatformKey} from 'sentry/data/platformCategories';
 
+import {ExtractPathResponseData} from './api';
 import type {TimeseriesValue} from './core';
 import type {Commit} from './integrations';
 import type {User} from './user';
@@ -27,7 +28,14 @@ export type Artifact = {
   size: number;
 };
 
-export type Deploy = {
+type DeploysResponse = ExtractPathResponseData<
+  '/api/0/organizations/{organization_slug}/releases/{version}/deploys/',
+  'get'
+>;
+
+export type Deploy = DeploysResponse[number];
+
+type DeployOld = {
   dateFinished: string;
   dateStarted: string;
   environment: string;
